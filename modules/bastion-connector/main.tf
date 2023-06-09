@@ -5,9 +5,9 @@ resource "aws_security_group_rule" "bastion_to_database" {
 
   type = "egress"
 
-  protocol = var.protocol
+  protocol  = var.protocol
   from_port = var.port
-  to_port = var.port
+  to_port   = var.port
 }
 
 resource "aws_security_group_rule" "database_from_bastion" {
@@ -17,7 +17,7 @@ resource "aws_security_group_rule" "database_from_bastion" {
 
   type = "ingress"
 
-  protocol = var.protocol
+  protocol  = var.protocol
   from_port = var.port
-  to_port = var.port
+  to_port   = var.port
 }

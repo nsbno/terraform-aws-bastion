@@ -5,7 +5,10 @@ data "aws_vpc" "this" {
 }
 
 data "aws_subnets" "private" {
-  vpc_id = data.aws_vpc.this.id
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.this.id]
+  }
 
   tags = {
     Tier = "Private"
@@ -29,7 +32,7 @@ module "bastion_to_database" {
   source = "../../modules/bastion-connector"
 
   bastion_security_group_id = module.bastion.security_group_id
-  target_security_group_id = data.aws_security_group.database.id
+  target_security_group_id  = data.aws_security_group.database.id
 
   port = 5432
 }
