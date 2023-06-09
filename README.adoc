@@ -8,13 +8,52 @@ This module can be used to remotely interact with resources in your private VPC.
 
 toc::[]
 
+== Examples
+
+link:examples/simple/main.tf[Simple]::
+A simple example of a bastion that is connected to a database.
+
 == Usage
-To use this module, just add it to your terraform!
+
+=== Connecting to the bastion
+
+To connect to the bastion, you need to use the AWS CLI.
+
+Here is an example of how to connect to a database in a private subnet:
+
+[source, bash]
+----
+aws ssm start-session \
+  --target i-1234567890abcdef0 \
+  --document-name AWS-StartPortForwardingSession \
+  --parameters host="database.vydev.io",portNumber="5432",localPortNumber="5432"
+----
+
+=== Creating the bastion
+
+To create a bastion in your environment, add the root module to your `-aws` repo:
 
 [source, hcl]
 ----
 module "bastion" {
   source = "github.com/nsbno/terraform-aws-bastion?ref=x.y.z"
+
+  vpc_id    = data.aws_vpc.this.id
+  subnet_id = data.aws_subnets.private.ids[0]
 }
 ----
 
+Then, in your project repositories, you need to spesifically allow the bastion to connect to your resources.
+This is done by adding the following to your project repositories:
+
+[source, hcl]
+----
+module "bastion_to_database" {
+  source = "github.com/nsbno/terraform-aws-bastion?ref=x.y.z//modules/bastion-connector"
+
+  bastion_security_group_id = module.bastion.security_group_id
+  target_security_group_id = data.aws_security_group.database.id
+
+  port = 5432
+}
+----

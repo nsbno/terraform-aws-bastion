@@ -5,10 +5,12 @@ orbs:
 
 terraform_versions: &terraform_versions
   - 1.0.11
-  - 1.1.4
+  - 1.4.4
 
 terraform_folders: &terraform_folders
   - ./
+  - ./modules/bastion-connector
+  - ./examples/simple
 
 workflows:
   validate:
