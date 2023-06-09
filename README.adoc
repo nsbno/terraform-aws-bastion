@@ -1,0 +1,20 @@
+= AWS Bastion
+:!toc-title:
+:!toc-placement:
+:toc:
+
+This module can be used to remotely interact with resources in your private VPC.
+
+
+toc::[]
+
+== Usage
+To use this module, just add it to your terraform!
+
+[source, hcl]
+----
+module "bastion" {
+  source = "github.com/nsbno/terraform-aws-bastion?ref=x.y.z"
+}
+----
+
