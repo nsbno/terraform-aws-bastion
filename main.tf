@@ -34,6 +34,15 @@ resource "aws_security_group" "this" {
   vpc_id = var.vpc_id
 }
 
+resource "aws_security_group_rule" "session_manager_connect" {
+  type              = "egress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  security_group_id = aws_security_group.this.id
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
 /*
  * = Instance Setup
  */
