@@ -1,3 +1,9 @@
+variable "name" {
+  description = "The name to use for resources. Defaults to bastion"
+  default     = "bastion"
+  type        = string
+}
+
 variable "vpc_id" {
   description = "The VPC to launch in"
   type        = string
