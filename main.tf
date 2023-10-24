@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
 }
 
 resource "aws_iam_role" "this" {
-  name               = "bastion"
+  name               = var.name
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
@@ -30,7 +30,7 @@ resource "aws_iam_role_policy_attachment" "ssm_managed_instance" {
  * = Networking
  */
 resource "aws_security_group" "this" {
-  name   = "bastion"
+  name   = var.name
   vpc_id = var.vpc_id
 }
 
@@ -57,7 +57,7 @@ data "aws_ami" "amazon_linux" {
 }
 
 resource "aws_iam_instance_profile" "this" {
-  name = "bastion"
+  name = var.name
   role = aws_iam_role.this.name
 }
 
@@ -72,6 +72,6 @@ resource "aws_instance" "this" {
   iam_instance_profile = aws_iam_instance_profile.this.name
 
   tags = {
-    Name = "bastion"
+    Name = var.name
   }
 }
