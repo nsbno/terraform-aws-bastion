@@ -8,12 +8,9 @@ This module can be used to remotely interact with resources in your private VPC.
 
 toc::[]
 
-== Examples
-
-link:examples/simple/main.tf[Simple]::
-A simple example of a bastion that is connected to a database.
-
 == Usage
+
+Remember to check out the link:variables.tf[*variables*] and link:outputs.tf[*outputs*] to see all options.
 
 === Connecting to the bastion
 
@@ -57,3 +54,9 @@ module "bastion_to_database" {
   port = 5432
 }
 ----
+
+== Examples
+
+link:examples/simple/main.tf[Simple]::
+A simple example of a bastion that is connected to a database.
+
