@@ -60,3 +60,5 @@ module "bastion_to_database" {
 link:examples/simple/main.tf[Simple]::
 A simple example of a bastion that is connected to a database.
 
+link:examples/tunnel-to-databases/README.adoc[Port forwarding to databases]::
+A simple shell script to easily tunnel to databases in your AWS account.
