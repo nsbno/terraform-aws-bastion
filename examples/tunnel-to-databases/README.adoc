@@ -1,0 +1,72 @@
+= Port forwarding to databases in AWS
+:!toc-title:
+:!toc-placement:
+:toc:
+
+These scripts can be modified to easily connect to databases in your AWS VPC using a bastion host. The bastion host acts as a secure gateway, allowing you to forward ports from your local machine to the database instances in your private subnets.
+
+
+toc::[]
+== Requirements
+You must have `jq` installed.
+You must have the AWS CLI installed.
+
+You must use bash version 4+. MacOS by default ships with bash 3.x.x. You can download a newer bash version from Homebrew. See https://apple.stackexchange.com/questions/193411/update-bash-to-version-4-0-on-osx.
+
+== Usage
+By modifying the link:./tunnel-script.sh[shell script] you can easily port forward to your database instances in AWS. The script uses the AWS CLI to start a session with the bastion host and forward the specified port to your local machine.
+
+=== Authenticating with AWS
+The script requires you to authenticate with AWS using the AWS CLI and setting the `AWS_PROFILE`-environment variable as you would do for working with terraform.
+
+=== Configuring the script
+Ensure you use the correct bash (Mac users should change the shell shebang to use bash > 4.
+
+Configure your database-endpoints to match the values of your AWS accounts. Databases in the same account and region share similar endpoints. Map your AWS profile names (from `./aws/config`) to your databases as below. Note: do not include the `cluster-`-prefix for Aurora Clusters here.
+```
+declare -A db_endpoints=( # The suffix of all databases in a region are the same
+  ["vy-ctrl-prod"]="********.eu-west-1.rds.amazonaws.com"
+  ["vy-ctrl-test"]="********.eu-west-1.rds.amazonaws.com"
+
+  ["vy-comp-test"]="********.eu-west-1.rds.amazonaws.com"
+  ["vy-comp-stage"]="********.eu-west-1.rds.amazonaws.com"
+]
+```
+
+You must also configure short form mappings of your databases to its configuration.
+Supported `db-type`-values are `cluster`, `rds` or `redis`. These define default ports and add the `cluster-`-prefix for Aurora Clusters.
+It follows the format of [`<shortname>`]=`<db-identifier>:<db-type>:<bastion-instance-name>`.
+```
+declare -A config
+config["ats"]="affected-trains:cluster:bastion"
+config["opinfo"]="operationalinformation:cluster:bastion"
+
+```
+
+=== Using the script
+It is recommended to set an alias for the script in your shell configuration file (e.g., `.bashrc` or `.zshrc`) to make it easier to use. For example: `alias tunnel="~/.scripts/vyscripts/tunnels.sh"`.
+
+Assuming you have set the alias, you can run the script with the following commands:
+```
+# To tunnel the database opinfo on localport 5433 and remote port 5432
+$ tunnel opinfo 5433 5432
+
+# To tunnel the database on localport 5433 using the default port of the database (e.g. 6379 for redis)
+$ tunnel redis 5433
+
+# To tunnel the database using the default ports (e.g. 5432 for postgres)
+$ tunnel opinfo
+```
+
+=== Multiple bastion instances (e.g. for shared VPCs)
+You can alter the functions `tunnel_with_shared_vpc` and `tunnel_with_old_vpc` if you have multiple bastion instances you want to connect to. You must also expand with corresponding if-statements at the bottom of the script.
+```
+if [ "$bastionName" == "bastion" ]; then
+  tunnel_with_shared_vpc
+elif [ "$bastionName" == "bastionhost" ]; then
+  tunnel_with_old_vpc
+else
+  echo "Error: Invalid bastion provided. Allowed values are 'bastion' or 'bastionhost'."
+  exit 1
+fi
+```
