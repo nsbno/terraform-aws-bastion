@@ -46,7 +46,7 @@ This is done by adding the following to your project repositories:
 [source, hcl]
 ----
 module "bastion_to_database" {
-  source = "github.com/nsbno/terraform-aws-bastion?ref=x.y.z//modules/bastion-connector"
+  source = "github.com/nsbno/terraform-aws-bastion//modules/bastion-connector?ref=x.y.z"
 
   bastion_security_group_id = module.bastion.security_group_id
   target_security_group_id = data.aws_security_group.database.id
