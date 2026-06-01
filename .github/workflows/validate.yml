@@ -1,0 +1,23 @@
+name: Validate
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+jobs:
+  lint:
+    name: Lint (${{ matrix.terraform_version }}, ${{ matrix.path }})
+    uses: nsbno/platform-actions/.github/workflows/lint.terraform.yml@v2
+    strategy:
+      matrix:
+        terraform_version:
+          - 1.0.11
+          - 1.4.4
+        path:
+          - ./
+          - ./modules/bastion-connector
+          - ./examples/simple
+    with:
+      terraform-version: ${{ matrix.terraform_version }}
+      working-directory: ${{ matrix.path }}
